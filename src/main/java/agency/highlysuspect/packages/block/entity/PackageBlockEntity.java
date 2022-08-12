@@ -35,15 +35,17 @@ public class PackageBlockEntity extends BlockEntity implements WorldlyContainer,
 	}
 	
 	public static final String CONTENTS_KEY = "PackageContents";
-	public static final int SLOT_COUNT = 8;
+	public static final int SLOT_COUNT = 9;
 	public static final int RECURSION_LIMIT = 3;
 	
 	private static final int[] NO_SLOTS = {};
-	private static final int[] ALL_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7};
+	private static final int[] ALL_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 	
 	private final NonNullList<ItemStack> inv = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 	private PackageStyle style = PackageStyle.ERROR_LOL;
 	private Component customName;
+
+    private static final boolean ACCEPT_INSERTS_FROM_FRONT = true;
 	
 	@Override
 	public Object getRenderAttachmentData() {
@@ -219,7 +221,14 @@ public class PackageBlockEntity extends BlockEntity implements WorldlyContainer,
 		
 		BlockState state = level.getBlockState(worldPosition);
 		if(state.getBlock() instanceof PackageBlock) {
-			return state.getValue(PackageBlock.FACING).primaryDirection == side ? NO_SLOTS : ALL_SLOTS;
+            if(ACCEPT_INSERTS_FROM_FRONT)
+            {
+               return ALL_SLOTS;
+            }
+            else
+            {
+                return state.getValue(PackageBlock.FACING).primaryDirection == side ? NO_SLOTS : ALL_SLOTS;
+            }
 		}
 		
 		return NO_SLOTS;
